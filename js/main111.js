@@ -1,7 +1,7 @@
 let accessToken = null;
 
 function authorizeSpotify() {
-    window.location = "https://accounts.spotify.com/authorize?client_id=896903d63c8649ff99676c7c3bb9d470&redirect_uri=http://127.0.0.1:5500/online.html&scope=user-read-private%20user-read-email%20playlist-modify-public&response_type=token";
+    window.location = "https://accounts.spotify.com/authorize?client_id=896903d63c8649ff99676c7c3bb9d470&redirect_uri=http://127.0.0.1:5500/online.html";
 }
 
 function extractAccessToken() {
