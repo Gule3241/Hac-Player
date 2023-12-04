@@ -1,0 +1,36 @@
+<!DOCTYPE html><html><head><title>Deezer API Song Search</title></head><body><form><label for="query">Search for songs:</label><input type="text" id="query" name="query" required><button type="submit">Search</button></form><ul id="results"></ul><script>
+    const form = document.querySelector('form');
+    const resultsList = document.querySelector('#results');
+    form.addEventListener('submit', function(event) {
+      event.preventDefault(); // Prevent the form submission from reloading the page
+      const searchQuery = document.querySelector('#query').value;
+      fetch(`https://deezerdevs-deezer.p.rapidapi.com/search?q=${searchQuery}`, {
+        headers: {
+          'X-RapidAPI-Host': 'deezerdevs-deezer.p.rapidapi.com',
+          'X-RapidAPI-Key': '53d33aeb5fmshdcc71296568aec1p1bf2f7jsnfbd9fe07b500'
+        }
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Error:', response.statusText);
+          }
+          return response.json();
+        })
+        .then(data => {
+          const songs = data.data; // Array of songs
+          resultsList.innerHTML = ''; // Clear previous search results
+          songs.forEach(song => {
+            const li = document.createElement('li');
+            li.textContent = `${song.title_short} by ${song.artist.name}`;
+            resultsList.appendChild(li); // Add the new song result to the page
+          });
+          console.log(resultsList);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    });
+
+
+    
+  </script></body></html>

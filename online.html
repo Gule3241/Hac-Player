@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>HacPlayer | Online</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+
+    <meta property="og:title" content="HacPlayer | Spotify-web-api-player"/>
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="This music player i.e. HacPlayer is related to spotify api."/>
+    <meta name="keywords" content="HacPlayer,Music Player, Spotify Api, Spotify,spotify Web api"/>
+    <meta property="og:url" content="https://hacplayer.com/online" />
+    <meta property="og:site_name" content="HacPlayer/online" />
+    
+    <meta name="image" property="og:image" content="image/logo.png" />
+    <meta name="author" content="Shyam Sundar Vashishtha" />
+
+    <!-- Favicons -->
+    <link rel="icon" href="image/logo.png" />
+    <link rel="shortcut icon" href="image/logo.png" />
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css?family=Russo+One" rel="stylesheet"/>
+
+   <!-- Library JavaScript Files  -->
+   <script src="lib/jquery/jquery.min.js"></script>
+   <script src="lib/jquery/jquery-migrate.min.js"></script>
+   <script src="lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+   <script src="lib/easing/easing.min.js"></script>
+   <script src="lib/superfish/hoverIntent.js"></script>
+   <script src="lib/superfish/superfish.min.js"></script>
+   <script src="lib/wow/wow.min.js"></script>
+   <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+   <script src="lib/magnific-popup/magnific-popup.min.js"></script>
+   <script src="lib/sticky/sticky.js"></script>
+
+   <!-- Libraries CSS Files -->
+   <link href="lib/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+   <link href="lib/animate/animate.min.css" rel="stylesheet" />
+   <link href="lib/ionicons/css/ionicons.min.css" rel="stylesheet" />
+   <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet" />
+   <link href="lib/magnific-popup/magnific-popup.css" rel="stylesheet" />
+   <link href="lib/ionicons/css/ionicons.min.css" rel="stylesheet" />
+   <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+   <!-- <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"/> -->
+
+    <!-- Main Files -->
+    <link rel="stylesheet" href="css/online.css" />
+    <link rel="stylesheet" href="css/online.scss" />
+    <link rel="stylesheet" href="css/index.css"/>
+    <script src="js/login.js"></script>
+    <script src="js/active.js"></script>
+    <script src="js/main.js"></script>
+
+  </head>
+  <style>
+    #intro {
+      width: 100%;
+      height: 100vh;
+      position: relative;
+      background: url("image/3428074.png") no-repeat;
+      background-size: cover;
+    }
+  </style>
+
+<div id="app">
+  <style>body {
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    margin: 20px;
+}
+
+h1 {
+    color: #b91d66;
+}
+
+label {
+    font-size: 1.2rem;
+    margin-right: 10px;
+}
+
+select {
+    font-size: 1rem;
+    padding: 5px;
+}
+
+button {
+    padding: 8px 16px;
+    font-size: 1rem;
+    background-color: #1DB954;
+    color: rgb(255, 255, 255);
+    border: none;
+    cursor: pointer;
+}
+
+#playlist-details {
+    margin-top: 20px;
+}
+</style>
+<div class="two">
+  <h1>Playlist Generator
+    <span>Using Spotify API</span>
+  </h1>
+</div>
+  
+<label for="mood">Select Mood:</label>
+<select id="mood">
+    <option value="happy">Happy</option>
+    <option value="epic">Epic</option>
+    <option value="dreamy">Dreamy</option>
+    <option value="euphoric">Euphoric</option>
+    <option value="laid-back">Laid Back</option>
+    <option value="quirky">Quirky</option>
+    <option value="running">Running</option>
+    <option value="relaxing">Relaxing</option>
+    <option value="suspense">Suspense</option>
+    <option value="mysterious">Mysterious</option>
+    <option value="sentimental">Sentimental</option>
+    <option value="sad">Sad</option>
+</select>
+
+<button class="button-85" role="button"button onclick="generatePlaylist()">GENRATE PLAYLIST USING API</button> 
+
+<script>
+  const clientId = '573b75c49d85402db2186d9f60c96641';
+const redirectUri = 'http://127.0.0.1:5500/genrate.html';
+const spotifyApiUrl = 'https://api.spotify.com/v1';
+let accessToken;
+
+function generatePlaylist() {
+    const selectedMood = document.getElementById('mood').value;
+
+    // Use Spotify API to generate playlist based on the selected mood
+    authenticateSpotify();
+}
+
+function authenticateSpotify() {
+    // Redirect to Spotify authorization endpoint
+    window.location.href = `https://accounts.spotify.com/authorize?client_id=573b75c49d85402db2186d9f60c96641&redirect_uri=http://127.0.0.1:5500/genrate.html&response_type=token&scope=playlist-modify-private`;
+}
+
+// Check if the page URL contains the access token (returned by Spotify)
+const hashParams = window.location.hash.substr(1).split('&').reduce(function (result, item) {
+    var parts = item.split('=');
+    result[parts[0]] = parts[1];
+    return result;
+}, {});
+
+if (hashParams.access_token) {
+    accessToken = hashParams.access_token;
+    // Now you can make requests to the Spotify API with the access token
+    createPlaylist();
+}
+
+function createPlaylist() {
+    const selectedMood = document.getElementById('mood').value;
+
+    // Step 1: Create a new private playlist
+    fetch(`${spotifyApiUrl}/me/playlists`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            name: `My ${selectedMood} Playlist`,
+            public: false,
+        }),
+    })
+    .then(response => response.json())
+    .then(playlist => {
+        console.log('Playlist created:', playlist);
+        // Step 2: Search for tracks based on the selected mood
+        searchTracks(selectedMood, playlist.id);
+    })
+    .catch(error => console.error('Error creating playlist:', error));
+}
+
+
+function searchTracks(mood, playlistId) {
+    // Step 1: Search for tracks based on the selected mood
+    const searchQuery = `track:${mood}`;
+
+    fetch(`${spotifyApiUrl}/search?q=${encodeURIComponent(searchQuery)}&type=track&limit=15`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Step 2: Extract track IDs from the search results
+        const trackIds = data.tracks.items.map(item => item.id);
+
+        // Step 3: Add the tracks to the created playlist
+        addTracksToPlaylist(playlistId, trackIds);
+    })
+    .catch(error => console.error('Error searching for tracks:', error));
+}
+
+
+// Implement this function to get track IDs based on the selected mood
+function addTracksToPlaylist(playlistId, trackIds) {
+    // Step 4: Add the tracks to the created playlist
+    fetch(`${spotifyApiUrl}/playlists/${playlistId}/tracks`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            uris: trackIds.map(id => `spotify:track:${id}`),
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Tracks added to playlist:', data);
+    })
+    .catch(error => console.error('Error adding tracks to playlist:', error));
+}
+</script>
+  <!--.. <button onclick="generatePlaylist()">Generate Playlist</button>.-->
+  <style>.button-85 {
+    padding: 0.6em 2em;
+    border: none;
+    outline: none;
+    color: rgb(255, 255, 255);
+    background: #111;
+    cursor: pointer;
+    position: relative;
+    z-index: 0;
+    border-radius: 10px;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+  }
+  
+  .button-85:before {
+    content: "";
+    background: linear-gradient(
+      45deg,
+      #ff0000,
+      #ff7300,
+      #fffb00,
+      #48ff00,
+      #00ffd5,
+      #002bff,
+      #7a00ff,
+      #ff00c8,
+      #ff0000
+    );
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    background-size: 400%;
+    z-index: -1;
+    filter: blur(5px);
+    -webkit-filter: blur(5px);
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    animation: glowing-button-85 20s linear infinite;
+    transition: opacity 0.3s ease-in-out;
+    border-radius: 10px;
+  }
+  
+  @keyframes glowing-button-85 {
+    0% {
+      background-position: 0 0;
+    }
+    50% {
+      background-position: 400% 0;
+    }
+    100% {
+      background-position: 0 0;
+    }
+  }
+  
+  .button-85:after {
+    z-index: -1;
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #222;
+    left: 0;
+    top: 0;
+    border-radius: 10px;
+  }</style>
+
+  <!--<button class="button-85" role="button"><a href="genrate.html">GENRATE PLAYLIST USING API</a></button>-->
+  <div id="playlist-details"></div>
+  <script src="js/login.js"></script>
+</div>
+
+
+  <body onload="onPageLoad()">
+                                              <!--==========================
+                                                      Intro Section
+                                            ============================-->
+    <section id="intro">
+      <div id="logo" class="pull-left" style="height: 70px;position:sticky;">
+        <h1>
+          <a href="index.html" class="scrollto" style="text-decoration: none;font-size: 50px;"><span><i class="fa fa-venus-mars" aria-hidden="true"></i></span>HacPlayer</a>
+        </h1>
+      </div>
+     
+    </section>
+
+
+    <!-- Different songs sections -->
+    <section class="miscellaneous-area section-padding-100-0">
+      <div class="container">
+        <div class="row">
+          <!-- ***** Weeks Top ***** --> 
+          <div class="col-12 col-lg-5">
+            <div class="weeks-top-area mb-100">
+              <div
+                class="section-heading text-left mb-50 wow fadeInUp"
+                data-wow-delay="50ms"
+              >
+                <p>See what’s new</p>
+                <h2>Daily top hits</h2>
+              </div>
+
+              <!-- Displaying another webpage -->
+              <iframe src="https://charts.spotify.com/charts/view/artist-global-daily/latest" title="Daily Top Hits" style="height: 500px;width: 400px;"></iframe>
+            </div>
+          </div>
+
+          <!-- ***** New Release Songs ***** -->
+          
+          <div class="col-12 col-lg-7">
+            <div class="new-hits-area mb-100">
+              <div class="section-heading text-left mb-50 wow fadeInUp" data-wow-delay="50ms">
+                <p>See what’s new</p>
+                <h2>New Releases</h2>
+              </div>
+              <div class="mb-3">
+                <label for="newSongs" style="color: purple;" class="form-label fa fa-2x">Tracks</label>
+                <select id="newSong" class="form-control fa"></select>
+                <input
+                  class="btn btn-primary btn-sm mt-3 fa"
+                  type="button"
+                  onclick="refreshNewReleases()"
+                  value="Refresh Song List"
+                />
+              </div>
+              <div class="mb-3">
+                <label for="newSongs" style="color: purple;" class="form-label fa fa-2x">AlbumsS</label>
+                <div id="newSongs" class="single-top-item d-flex wow fadeInUp" data-wow-delay="150ms" style="background-color: rgb(237, 204, 247);border: 3px solid rgb(86, 86, 87);border-radius: 8px;">
+                  
+                </div>
+                <input
+                  class="btn btn-primary btn-sm mt-3 fa"
+                  type="button"
+                  onclick="fetchSongs()"
+                  value="Fetch New Songs of above choosen album"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="container"  style="display: flex; flex-wrap: wrap;">
+      <div id="deviceSection" class="row">
+        <div class="col">
+          <div class="col-12 col-lg-4">
+            <div class="popular-artists-area mb-100">
+              
+                <h2>User's Devices</h2>
+              
+              <div class="mb-3">
+                <label for="devices" style="color:purple;" class="form-label fa fa-2x">Devices</label>
+                <select id="devices" class="form-control fa"></select>
+                <input
+                  class="btn btn-primary btn-sm mt-3 fa "
+                  type="button"
+                  onclick="refreshDevices()"
+                  value="Refresh Devices"
+                />
+                <input
+                  type="button"
+                  class="btn btn-dark btn-sm mt-3 fa"
+                  onclick="transfer()"
+                  value="Transfer"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-4">
+            <div class="popular-artists-area mb-100">
+              
+                <h2>User's Favourite </h2>
+              <div class="mb-3">
+                <label for="playlists" style="color:purple;" class="form-label fa fa-2x">Albums</label>
+                <select id="playlists" class="form-control fa"></select>
+                <input
+                  class="btn btn-primary btn-sm mt-3 fa"
+                  type="button"
+                  onclick="refreshPlaylists()"
+                  value="Refresh Playlists"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-4">
+            <div class="popular-artists-area mb-100">
+              
+                <h2>User's Favourite</h2>
+              <div class="mb-3">
+                <label for="tracks" style="color: purple;" class="form-label fa fa-2x">Tracks</label>
+                <select id="tracks" class="form-control fa"></select>
+                <input
+                  class="btn btn-primary btn-sm mt-3 fa"
+                  type="button"
+                  onclick="fetchTracks()"
+                  value="Fetch Tracks"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-12">
+            <div class="popular-artists-area mb-100">
+              
+                <h2>Search User's Most Listened to Artists</h2>
+              <div class="mb-3">
+                <label for="tracks"  style="color:purple;" class="form-label fa fa-2x">Search Artists</label>
+                <input id="album" class="form-control fa" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Appology Note  -->
+          <div class="col-12 col-lg-12">
+            <div class="popular-artists-area mb-100">
+              <h1 style="color: red">Attention Visitor's !</h1>
+              <h3 style="color: green;">Dear Visitor,<br>
+                Thank you for visiting this music player i.e. HacPlayer. We are truly sorry that you cannot play song on this player. We understand your disappointment, and apologize for any inconvenience that this may have caused you.
+                <br>
+                  We sincerely apologize for any inconvenience you may be experiencing while using our website. As we are still in the process of learning and modifying our webpage, you might be encountering some issues.
+                <br>
+                Please rest assured that our team is actively working on resolving these issues and improving your browsing experience. We appreciate your patience and understanding during this learning phase.
+                <br>
+                Thank you again for visiting this and we will try to resolve this issue very soon.
+                <br>
+                Thanks,
+                <br>
+                @IDKWhatWeAreDoing
+                <br>
+                Full Stack Developer(Learner)</h3>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-12">
+            <div class="popular-artists-area mb-100">
+              
+                <h1 class="fa fa-4x">Player</h1>
+              
+
+              <div class="row mt-3" style="border: 3px solid rgb(71, 69, 69);">
+                <div class="col">
+                  <h1 style="color:purple;">Currently Playing</h1>
+                  <input
+                    type="button"
+                    class="btn btn-primary  fa"
+                    onclick="currentlyPlaying()"
+                    value="Refresh Currently Playing"
+                  />
+                  <div>
+                    <img id="albumImage" src="image/logo.png"style="border: 2px solid black;border-radius: 15px" />
+                    <div id="trackTitle" style="color:purple;">Track Name</div>
+                    <div id="trackArtist" style="color:purple;">Artist Name</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col">
+                  <input
+                    type="button"
+                    class="btn btn-dark fa fa-2x"
+                    onclick="previous()"
+                    value="Prev"
+                  />
+                  <input
+                    type="button"
+                    class="btn btn-dark fa fa-2x"
+                    onclick="play()"
+                    value="Play"
+                  />
+                  <input
+                    type="button"
+                    class="btn btn-dark fa fa-2x"
+                    onclick="shuffle()"
+                    value="Shuffle"
+                  />
+                  <input
+                    type="button"
+                    class="btn btn-dark fa fa-2x"
+                    onclick="pause()"
+                    value="Pause"
+                  />
+                  <input
+                    type="button"
+                    class="btn btn-dark fa fa-2x"
+                    onclick="next()"
+                    value="Next"
+                  />
+                </div>
+              </div>
+
+              <div class="row mt-3">
+                <div class="col">
+                  <div id="radioButtons"></div>
+                  <input
+                    type="button"
+                    class="btn btn-dark fa"
+                    onclick="saveNewRadioButton()"
+                    value="Add"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section id="contact" class="wow fadeInUp">
+      <div class="container">
+        <div class="section-header">
+          <h2>Contact Us</h2>
+          <p>
+            Provide Feedback to the player and the changes needed. We will appreciate your contribution.
+          </p>
+        </div>
+
+        <div class="row contact-info">
+          <div class="col-lg-5">
+            <div class="contact-address">
+              <i class="ion-ios-location-outline"></i>
+              <h3>Address</h3>
+              <address>Bangalore</address>
+            </div>
+            <div class="contact-phone">
+              <i class="ion-ios-telephone-outline"></i>
+              <h3>Phone Number</h3>
+              <p><a href="tel:+918817719155">+91 9611989407</a></p>
+            </div>
+            <div class="contact-email">
+              <i class="ion-ios-email-outline"></i>
+              <h3>Email</h3>
+              <p><a href="mailto:work.gule@gmail.com">IDKWhatWeAreDoing@gmail.com</a></p>
+            </div>
+          </div>
+          <div class="col-lg-7">
+            <div class="container">
+              <div class="form">
+                <!-- Form itself -->
+                <form name="sentMessage" class="well" id="contactForm" action="https://getform.io/f/abbe0aef-31e0-4979-a14b-3505be6f9a9b" method="POST">
+                  <div class="control-group">
+                    <div class="form-group">
+                      <input type="text" class="form-control" placeholder="Full Name" id="name" name="name" required data-validation-required-message="Please enter your name"/>
+                      <p class="help-block"></p>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="controls">
+                      <input type="email" class="form-control" placeholder="Email" id="email" name="email" required data-validation-required-message="Please enter your email"/>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <div class="controls">
+                      <textarea rows="10" cols="100" class="form-control" placeholder="Message" id="message" name="message" required data-validation-required-message="Please enter your message" minlength="5" data-validation-minlength-message="Min 5 characters" maxlength="999" style="resize: none"></textarea>
+                    </div>
+                  </div>
+                  <div id="success"></div>
+                  <!-- For success/fail messages -->
+                  <button type="submit" class="btn btn-primary pull-right">Send</button><br/>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer id="footer">
+      <div class="container">
+        <div class="copyright">
+          &copy; Copyright <strong>HacPlayer</strong>. All Rights Reserved
+        </div>
+        <div class="credits">
+          Made with <i class="fa fa-heart"></i> by
+          <a href="https:"
+            >@IDKWhatWeAreDoing</a
+          >
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
