@@ -2,6 +2,7 @@
 This Music Player i.e. HacPlayer is part of my Real world JS implementation and is created to understand all the functionalities of API.
 Please Logout from spotify at first for the website to work
 
+IF THE ONLINE WEBPAGE DOESNT WORK PLEASE DOWNLOAD ALL THE FILES AND USE IT IN VS CODE, AS THERE ARE FEW BUGS IN THE SPOTIFY API
             
              Thank you for visiting this music player i.e. HacPlayer. We are truly sorry that you cannot play song on this player. We understand your disappointment, and apologize for any inconvenience that this may have caused you.
              The spotify API does not create plalyist all of the time/takes time to reflect on your account, sorry for the inconvenience faced, we are working on a fix.
